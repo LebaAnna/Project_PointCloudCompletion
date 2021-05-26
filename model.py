@@ -91,7 +91,7 @@ class Decoder(nn.Module):
         y_detail = x + repeated_centers  # (B, 3, 16x1024)
 
         return y_coarse, y_detail
-
+//From here
 class Enc_fold(nn.Module):
     def __init__(self):
         super(Enc_fold, self).__init__()
@@ -171,7 +171,7 @@ class DecFold2(nn.Module):
         x = self.relu(self.conv2(x))
         x = self.conv3(x)
         return x
-
+//Till here
 class AutoEncoder(nn.Module):
     def __init__(self):
         super(AutoEncoder, self).__init__()
