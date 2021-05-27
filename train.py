@@ -5,8 +5,7 @@ import torch.optim as optim
 
 from dataset.dataset import ShapeNet
 from model import AutoEncoder
-from loss import ChamferDistance, EarthMoverDistance
-
+from loss import ChamferDistance
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--partial_root', type=str, default='./dataset/train/partial')
@@ -28,8 +27,7 @@ args = parser.parse_args()
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 cd_loss = ChamferDistance()
-emd_loss = EarthMoverDistance()
-loss_d1 = cd_loss if args.loss_d1 == 'cd' else emd_loss
+loss_d1 = cd_loss 
 loss_d2 = cd_loss
 
 train_dataset = ShapeNet(partial_path=args.partial_root, gt_path=args.gt_root, split='train')
