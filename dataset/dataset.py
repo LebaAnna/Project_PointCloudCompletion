@@ -21,7 +21,7 @@ class ShapeNet(Data.Dataset):
         self.num_coarse = num_coarse
         self.num_dense = num_dense
         
-        with open('dataset/car_split/{}.list'.format(split), 'r') as f:
+        with open('dataset/{}.list'.format(split), 'r') as f:
             filenames = [line.strip() for line in f]
         
         self.metadata = list()
@@ -53,16 +53,16 @@ class ShapeNet(Data.Dataset):
 
 
 if __name__ == '__main__':
-    ROOT = "/home/rico/Workspace/Dataset/shapenetpcn"
+    ROOT = "./dataset"
     GT_ROOT = os.path.join(ROOT, 'gt')
     PARTIAL_ROOT = os.path.join(ROOT, 'partial')
 
     train_dataset = ShapeNet(partial_path=PARTIAL_ROOT, gt_path=GT_ROOT, split='train')
     val_dataset = ShapeNet(partial_path=PARTIAL_ROOT, gt_path=GT_ROOT, split='val')
     test_dataset = ShapeNet(partial_path=PARTIAL_ROOT, gt_path=GT_ROOT, split='test')
-    print("\033[33mTraining dataset\033[0m has {} pair of partial and ground truth point clouds".format(len(train_dataset)))
-    print("\033[33mValidation dataset\033[0m has {} pair of partial and ground truth point clouds".format(len(val_dataset)))
-    print("\033[33mTesting dataset\033[0m has {} pair of partial and ground truth point clouds".format(len(test_dataset)))
+    print("Training dataset has {} pair of partial and ground truth point clouds".format(len(train_dataset)))
+    print("Validation dataset has {} pair of partial and ground truth point clouds".format(len(val_dataset)))
+    print("Testing dataset has {} pair of partial and ground truth point clouds".format(len(test_dataset)))
 
     # visualization
     input_pc, coarse_pc, dense_pc = train_dataset[random.randint(0, len(train_dataset))]
