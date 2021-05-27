@@ -7,8 +7,8 @@ from loss import ChamferDistance
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--partial_root', type=str, default='/home/rico/Workspace/Dataset/shapenetpcn/partial')
-parser.add_argument('--gt_root', type=str, default='/home/rico/Workspace/Dataset/shapenetpcn/gt')
+parser.add_argument('--partial_root', type=str, default='./dataset/test/partial')
+parser.add_argument('--gt_root', type=str, default='./dataset/test/gt')
 parser.add_argument('--batch_size', type=int, default=16)
 parser.add_argument('--num_workers', type=int, default=4)
 args = parser.parse_args()
