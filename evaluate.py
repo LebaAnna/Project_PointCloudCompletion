@@ -45,4 +45,4 @@ with torch.no_grad():
         iter_count += 1
 
     mean_loss = total_loss / iter_count
-    print("\033[31mTesting loss is {}\033[0m".format(mean_loss))
+    print("\nTesting loss is {}".format(mean_loss))
