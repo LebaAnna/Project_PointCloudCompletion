@@ -9,8 +9,8 @@ from loss import ChamferDistance, EarthMoverDistance
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--partial_root', type=str, default='./dataset/test/partial')
-parser.add_argument('--gt_root', type=str, default='./dataset/test/gt')
+parser.add_argument('--partial_root', type=str, default='./dataset/train/partial')
+parser.add_argument('--gt_root', type=str, default='./dataset/train/gt')
 parser.add_argument('--model', type=str, default=None)
 parser.add_argument('--num_input', type=int, default=2048)
 parser.add_argument('--num_coarse', type=int, default=1024)
@@ -104,7 +104,7 @@ for epoch in range(1, args.epochs + 1):
             iter_count += 1
 
         mean_loss = total_loss / iter_count
-        print("\033[31mValidation epoch {}/{}, loss is {}\033[0m".format(epoch, args.epochs, mean_loss))
+        print("Validation epoch {}/{}, loss is {}".format(epoch, args.epochs, mean_loss))
 
         # records the best model and epoch
         if mean_loss < minimum_loss:
