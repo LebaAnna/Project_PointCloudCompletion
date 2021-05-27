@@ -9,8 +9,8 @@ from loss import ChamferDistance, EarthMoverDistance
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--partial_root', type=str, default='/home/rico/Workspace/Dataset/shapenetpcn/partial')
-parser.add_argument('--gt_root', type=str, default='/home/rico/Workspace/Dataset/shapenetpcn/gt')
+parser.add_argument('--partial_root', type=str, default='./dataset/test/partial')
+parser.add_argument('--gt_root', type=str, default='./dataset/test/gt')
 parser.add_argument('--model', type=str, default=None)
 parser.add_argument('--num_input', type=int, default=2048)
 parser.add_argument('--num_coarse', type=int, default=1024)
@@ -80,7 +80,7 @@ for epoch in range(1, args.epochs + 1):
             print("Training epoch {}/{}, iteration {}/{}: loss is {}".format(epoch, args.epochs, i, max_iter, loss.item()))
     scheduler.step()
 
-    print("\033[31mTraining epoch {}/{}: avg loss = {}\033[0m".format(epoch, args.epochs, total_loss / iter_count))
+    print("Training epoch {}/{}: avg loss = {}".format(epoch, args.epochs, total_loss / iter_count))
 
     # evaluation
     network.eval()
@@ -112,4 +112,4 @@ for epoch in range(1, args.epochs + 1):
             minimum_loss = mean_loss
             torch.save(network.state_dict(), args.log_dir + '/lowest_loss.pth')
 
-    print("\033[31mBest model (lowest loss) in epoch {}\033[0m".format(best_epoch))
+    print("Best model (lowest loss) in epoch {}".format(best_epoch))
