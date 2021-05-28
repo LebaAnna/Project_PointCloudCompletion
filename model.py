@@ -91,25 +91,25 @@ class Decoder(nn.Module):
         y_detail = x + repeated_centers  
 
         return y_coarse, y_detail
+    
 class Enc_fold(nn.Module):
     def __init__(self):
-        super(Enc_fold, self).__init__()
-        # first shared mlp
-        self.conv1 = nn.Conv1d(3, 128, 1)
-        self.conv2 = nn.Conv1d(128, 256, 1)
-        self.bn1 = nn.BatchNorm1d(128)
-        self.bn2 = nn.BatchNorm1d(256)
+        super(FoldingNetEnc, self).__init__()
+        self.feat = PointNetfeat(global_feat=True)
+        self.fc1 = nn.Linear(1024, 512)
+        self.fc2 = nn.Linear(512, 512)
+        # self.fc2 = nn.Linear(512, 256)
+        # self.fc3 = nn.Linear(256, k)
+        self.bn1 = nn.BatchNorm1d(512)
+        # self.bn2 = nn.BatchNorm1d(256)
+        self.relu = nn.ReLU()
 
-        # second shared mlp
-        self.conv3 = nn.Conv1d(256, 512, 1)
-        self.bn3 = nn.BatchNorm1d(512)
-        
+    def forward(self, x):
+        x, trans = self.feat(x)  # x = batch,1024
+        x = F.relu(self.bn1(self.fc1(x)))  # x = batch,512
+        x = self.fc2(x)  # x = batch,512
 
-    def forward(self, x):       
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = F.relu(self.bn2(self.conv2(x))) 
-        x = F.relu(self.bn3(self.conv3(x)))
-        return x
+        return x, trans
     
 class Dec_fold(nn.Module):
     def __init__(self):
@@ -142,31 +142,36 @@ class Dec_fold(nn.Module):
         x = self.fold2(x)  
 
         return x
-class DecFold1(nn.Module):
+class FoldingNetDecFold1(nn.Module):
     def __init__(self):
-        super(DecFold1, self).__init__()
-        self.conv1 = nn.Conv1d(512, 512, 1)
-        self.conv2 = nn.Conv1d(512, 3, 1)
+        super(FoldingNetDecFold1, self).__init__()
+        self.conv1 = nn.Conv1d(514, 512, 1)
+        self.conv2 = nn.Conv1d(512, 512, 1)
+        self.conv3 = nn.Conv1d(512, 3, 1)
+
         self.relu = nn.ReLU()
 
-    def forward(self, x):  
-        x = self.relu(self.conv1(x)) 
-        x = self.conv2(x)
+    def forward(self, x):  # input x = batch,514,45^2
+        x = self.relu(self.conv1(x))  # x = batch,512,45^2
+        x = self.relu(self.conv2(x))
+        x = self.conv3(x)
+
         return x
 
 
-class DecFold2(nn.Module):
+class FoldingNetDecFold2(nn.Module):
     def __init__(self):
-        super(DecFold2, self).__init__()
-        self.conv1 = nn.Conv1d(512, 512, 1)
-        self.conv2 = nn.Conv1d(512, 3, 1)
+        super(FoldingNetDecFold2, self).__init__()
+        self.conv1 = nn.Conv1d(515, 512, 1)
+        self.conv2 = nn.Conv1d(512, 512, 1)
+        self.conv3 = nn.Conv1d(512, 3, 1)
         self.relu = nn.ReLU()
 
-    def forward(self, x):  
+    def forward(self, x):  # input x = batch,515,45^2
         x = self.relu(self.conv1(x))
-        x = self.conv2(x)
+        x = self.relu(self.conv2(x))
+        x = self.conv3(x)
         return x
-
 class AutoEncoder(nn.Module):
     def __init__(self):
         super(AutoEncoder, self).__init__()
