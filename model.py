@@ -62,12 +62,7 @@ class Decoder(nn.Module):
         self.conv3 = nn.Conv1d(512, 3, 1)
         self.bn3 = nn.BatchNorm1d(512)
         self.bn4 = nn.BatchNorm1d(512)
-
-        # 2D grid
-        grids = np.meshgrid(np.linspace(-0.05, 0.05, 4, dtype=np.float32),
-                            np.linspace(-0.05, 0.05, 4, dtype=np.float32))                               
-        self.grids = torch.Tensor(grids).view(2, -1) 
-    
+        
     def forward(self, x):
         b = x.size()[0]
         # global features
@@ -77,24 +72,15 @@ class Decoder(nn.Module):
         x = F.relu(self.bn1(self.linear1(x)))
         x = F.relu(self.bn2(self.linear2(x)))
         x = self.linear3(x)
-        y_coarse = x.view(-1, 3, self.num_coarse)  
-
-        repeated_centers = y_coarse.unsqueeze(3).repeat(1, 1, 1, 16).view(b, 3, -1)  
-        repeated_v = v.unsqueeze(2).repeat(1, 1, 16 * self.num_coarse)               
-        grids = self.grids.to(x.device)  
-        grids = grids.unsqueeze(0).repeat(b, 1, self.num_coarse)                     
-
-        x = torch.cat([repeated_v, grids, repeated_centers], dim=1)                  
         x = F.relu(self.bn3(self.conv1(x)))
         x = F.relu(self.bn4(self.conv2(x)))
         x = self.conv3(x)               
-        y_detail = x + repeated_centers  
-
-        return y_coarse, y_detail
+        
+        return x
     
 class Enc_fold(nn.Module):
     def __init__(self):
-        super(FoldingNetEnc, self).__init__()
+        super(Enc_fold, self).__init__()
         self.feat = PointNetfeat(global_feat=True)
         self.fc1 = nn.Linear(1024, 512)
         self.fc2 = nn.Linear(512, 512)
@@ -142,6 +128,75 @@ class Dec_fold(nn.Module):
         x = self.fold2(x)  
 
         return x
+class STN3d(nn.Module):
+    def __init__(self):
+        super(STN3d, self).__init__()
+        self.conv1 = torch.nn.Conv1d(3, 64, 1)
+        self.conv2 = torch.nn.Conv1d(64, 128, 1)
+        self.conv3 = torch.nn.Conv1d(128, 1024, 1)
+        self.fc1 = nn.Linear(1024, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 9)
+        self.relu = nn.ReLU()
+
+        self.bn1 = nn.BatchNorm1d(64)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.bn3 = nn.BatchNorm1d(1024)
+        self.bn4 = nn.BatchNorm1d(512)
+        self.bn5 = nn.BatchNorm1d(256)
+
+    def forward(self, x):
+        batchsize = x.size()[0]
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = torch.max(x, 2, keepdim=True)[0]
+        x = x.view(-1, 1024)
+
+        x = F.relu(self.bn4(self.fc1(x)))
+        x = F.relu(self.bn5(self.fc2(x)))
+        x = self.fc3(x)
+
+        iden = Variable(torch.from_numpy(np.array([1, 0, 0, 0, 1, 0, 0, 0, 1]).astype(np.float32))).view(1, 9).repeat(
+            batchsize, 1)
+        if x.is_cuda:
+            iden = iden.cuda()
+        x = x + iden
+        x = x.view(-1, 3, 3)
+        return x
+
+
+class PointNetfeat(nn.Module):
+    def __init__(self, global_feat=True):
+        super(PointNetfeat, self).__init__()
+        self.stn = STN3d()
+        self.conv1 = torch.nn.Conv1d(3, 64, 1)
+        self.conv2 = torch.nn.Conv1d(64, 128, 1)
+        self.conv3 = torch.nn.Conv1d(128, 1024, 1)
+        self.bn1 = nn.BatchNorm1d(64)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.bn3 = nn.BatchNorm1d(1024)
+        self.global_feat = global_feat
+
+    def forward(self, x):
+        batchsize = x.size()[0]
+        n_pts = x.size()[2]
+        trans = self.stn(x)
+        x = x.transpose(2, 1)
+        x = torch.bmm(x, trans)
+        x = x.transpose(2, 1)
+        x = F.relu(self.bn1(self.conv1(x)))
+        pointfeat = x
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = self.bn3(self.conv3(x))  # x = batch,1024,n(n=2048)
+        x = torch.max(x, 2, keepdim=True)[0]  # x = batch,1024,1
+        x = x.view(-1, 1024)  # x = batch,1024
+        if self.global_feat:
+            return x, trans
+        else:
+            x = x.view(-1, 1024, 1).repeat(1, 1, n_pts)
+            return torch.cat([x, pointfeat], 1), trans
+
 class DecFold1(nn.Module):
     def __init__(self):
         super(FoldingNetDecFold1, self).__init__()
