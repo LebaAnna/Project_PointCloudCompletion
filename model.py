@@ -142,7 +142,7 @@ class Dec_fold(nn.Module):
         x = self.fold2(x)  
 
         return x
-class FoldingNetDecFold1(nn.Module):
+class DecFold1(nn.Module):
     def __init__(self):
         super(FoldingNetDecFold1, self).__init__()
         self.conv1 = nn.Conv1d(514, 512, 1)
@@ -159,7 +159,7 @@ class FoldingNetDecFold1(nn.Module):
         return x
 
 
-class FoldingNetDecFold2(nn.Module):
+class DecFold2(nn.Module):
     def __init__(self):
         super(FoldingNetDecFold2, self).__init__()
         self.conv1 = nn.Conv1d(515, 512, 1)
