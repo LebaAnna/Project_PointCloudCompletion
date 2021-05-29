@@ -106,16 +106,19 @@ for epoch in range(1, args.epochs + 1):
 
         # records the best model and epoch
         if mean_loss < minimum_loss:
-            input_pc, coarse_pc, dense_pc = val_dataset[random.randint(0, len(val_dataset))]
+            partial_input, coarse_gt, dense_gt = val_dataset[random.randint(0, len(val_dataset))]
             partial_input = partial_input.to(DEVICE)
             coarse_gt = coarse_gt.to(DEVICE)
             dense_gt = dense_gt.to(DEVICE)
             partial_input = partial_input.permute(0, 2, 1)
             
             v, y_coarse, y_detail = network(partial_input)
-
+            
             y_coarse = y_coarse.permute(0, 2, 1)
             y_detail = y_detail.permute(0, 2, 1)
+            save_point_cloud(partial_input.numpy())
+            save_point_cloud(dense_gt.numpy())
+            save_point_cloud(y_detail.numpy())
             best_epoch = epoch
             minimum_loss = mean_loss
             torch.save(network.state_dict(), + 'dataset/train/trained_model_fold.pth')
