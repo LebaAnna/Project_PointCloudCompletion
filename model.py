@@ -93,7 +93,6 @@ class FoldingNet(nn.Module):
 
         self.encoder = Encoder(num_points=num_points)
         self.decoder = Decoder(num_points=num_points)
-        self.loss = ChamferLoss()
 
     def forward(self, input):
         codeword = self.encoder(input)
