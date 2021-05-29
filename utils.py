@@ -12,7 +12,7 @@ def show_point_cloud(points: np.ndarray, rgd=None):
     point_cloud.points = Vector3dVector(points)
     if rgd is not None:
         point_cloud.paint_uniform_color(rgd)
-    draw_geometries([point_cloud])
+    write_point_cloud("/content/abcd.pcd", pcd, write_ascii=False)
 
 
 def setup_seed(seed):
