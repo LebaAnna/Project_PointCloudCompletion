@@ -119,7 +119,7 @@ for epoch in range(1, args.epochs + 1):
             y_detail = y_detail.permute(0, 2, 1)
             best_epoch = epoch
             minimum_loss = mean_loss
-            torch.save(network.state_dict(), args.log_dir + '/lowest_loss.pth')
+            torch.save(network.state_dict(), args.log_dir + '/trained_model.pth')
             
 
     #print("Best model (lowest loss) in epoch {}".format(best_epoch))
