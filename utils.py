@@ -5,7 +5,7 @@ import numpy as np
 from open3d import *
 
 
-def show_point_cloud(points: np.ndarray, rgd=None):
+def save_point_cloud(points: np.ndarray, rgd=None):
     assert points.ndim == 2
 
     point_cloud = PointCloud()
