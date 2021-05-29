@@ -21,7 +21,7 @@ test_dataset = ShapeNet(partial_path=args.partial_root, gt_path=args.gt_root, sp
 test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
 network = AutoEncoder()
-network.load_state_dict(torch.load('log/lowest_loss.pth'))
+network.load_state_dict(torch.load('/dataset/test/trained_model_pcn.pth'))
 network.to(DEVICE)
 
 # testing: evaluate the mean cd loss
