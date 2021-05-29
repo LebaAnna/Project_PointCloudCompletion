@@ -109,5 +109,8 @@ for epoch in range(1, args.epochs + 1):
             best_epoch = epoch
             minimum_loss = mean_loss
             torch.save(network.state_dict(), args.log_dir + '/lowest_loss.pth')
+            
 
-    print("Best model (lowest loss) in epoch {}".format(best_epoch))
+    #print("Best model (lowest loss) in epoch {}".format(best_epoch))
+    
+
