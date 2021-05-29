@@ -87,7 +87,7 @@ class Decoder(nn.Module):
         return after_folding2.transpose(1, 2)  # [bs, m ,3]
 
 
-class FoldNet(nn.Module):
+class FoldingNet(nn.Module):
     def __init__(self, num_points):
         super(FoldNet, self).__init__()
 
@@ -119,6 +119,6 @@ if __name__ == "__main__":
     y_c, y_d = decoder(v)
     print(y_c.size(), y_d.size())
 
-    ae = AutoEncoder()
+    ae = FoldingNet()
     v, y_coarse, y_detail = ae(pcs)
     print(v.size(), y_coarse.size(), y_detail.size())
