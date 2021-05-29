@@ -5,14 +5,14 @@ import numpy as np
 from open3d import *
 
 
-def save_point_cloud(points: np.ndarray, rgd=None):
+def save_point_cloud(points: np.ndarray, path='visual/out.pcd', rgd=None):
     assert points.ndim == 2
 
     point_cloud = PointCloud()
     point_cloud.points = Vector3dVector(points)
     if rgd is not None:
         point_cloud.paint_uniform_color(rgd)
-    write_point_cloud("/content/abcd.pcd", pcd, write_ascii=False)
+    write_point_cloud(path, pcd, write_ascii=False)
 
 
 def setup_seed(seed):
