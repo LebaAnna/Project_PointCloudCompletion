@@ -21,7 +21,7 @@ test_dataset = ShapeNet(partial_path=args.partial_root, gt_path=args.gt_root, sp
 test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
 network = FoldingNet()
-network.load_state_dict(torch.load('/dataset/train/trained_model_fold.pth'))
+network.load_state_dict(torch.load('/model/trained_model_fold.pth'))
 network.to(DEVICE)
 
 # testing: evaluate the mean cd loss
@@ -43,6 +43,19 @@ with torch.no_grad():
         loss = cd_loss(dense_gt, y_detail)
         total_loss += loss.item()
         iter_count += 1
+    partial_input, coarse_gt, dense_gt = test_dataset[random.randint(0, len(test_dataset))]
+    partial_input = partial_input.to(DEVICE)
+    coarse_gt = coarse_gt.to(DEVICE)
+    dense_gt = dense_gt.to(DEVICE)
+    partial_input = partial_input.permute(0, 2, 1)
+           
+    v, y_coarse, y_detail = network(partial_input)
+          
+    y_coarse = y_coarse.permute(0, 2, 1)
+    y_detail = y_detail.permute(0, 2, 1)
+    save_point_cloud(partial_input.numpy())
+    save_point_cloud(dense_gt.numpy())
+    save_point_cloud(y_detail.numpy())
 
     mean_loss = total_loss / iter_count
     print("\nTesting loss is {}".format(mean_loss))
