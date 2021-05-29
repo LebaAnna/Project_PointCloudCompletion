@@ -122,7 +122,7 @@ for epoch in range(1, args.epochs + 1):
             save_point_cloud(y_detail.numpy())
             best_epoch = epoch
             minimum_loss = mean_loss
-            torch.save(network.state_dict(), + 'dataset/train/trained_model_fold.pth')
+            torch.save(network.state_dict(), + 'model/trained_model_fold.pth')
             
 
     #print("Best model (lowest loss) in epoch {}".format(best_epoch))
