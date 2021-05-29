@@ -117,9 +117,9 @@ for epoch in range(1, args.epochs + 1):
             
             y_coarse = y_coarse.permute(0, 2, 1)
             y_detail = y_detail.permute(0, 2, 1)
-            save_point_cloud(partial_input.numpy())
-            save_point_cloud(dense_gt.numpy())
-            save_point_cloud(y_detail.numpy())
+            save_point_cloud(partial_input.numpy(), 'visual/partial_input.pcd')
+            save_point_cloud(dense_gt.numpy(), 'visual/gt.pcd')
+            save_point_cloud(y_detail.numpy(), 'visual/output.pcd')
             best_epoch = epoch
             minimum_loss = mean_loss
             torch.save(network.state_dict(), + 'model/trained_model_fold.pth')
