@@ -6,6 +6,7 @@ import torch.optim as optim
 from dataset.dataset import ShapeNet
 from model import AutoEncoder
 from loss import ChamferDistance
+from utils import save_point_cloud
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--partial_root', type=str, default='./dataset/train/partial')
@@ -96,7 +97,12 @@ for epoch in range(1, args.epochs + 1):
 
             y_coarse = y_coarse.permute(0, 2, 1)
             y_detail = y_detail.permute(0, 2, 1)
-
+            
+            if(i==len(val_dataloader)-1):
+                save_point_cloud(partial_input)
+                save_point_cloud(dense_gt)
+                save_point_cloud(y_detail)
+                
             loss = loss_d1(coarse_gt, y_coarse) + args.alpha * loss_d2(dense_gt, y_detail)
             total_loss += loss.item()
             iter_count += 1
