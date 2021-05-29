@@ -1,6 +1,7 @@
 import argparse
 
 import torch
+import numpy
 import torch.optim as optim
 
 from dataset.dataset import ShapeNet
