@@ -5,7 +5,7 @@ import numpy
 import torch.optim as optim
 
 from dataset.dataset import ShapeNet
-from model import FoldingNet
+from model import Folding
 from loss import ChamferDistance
 from utils import save_point_cloud
 
@@ -36,7 +36,7 @@ val_dataset = ShapeNet(partial_path=args.partial_root, gt_path=args.gt_root, spl
 train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
 val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
-network = FoldingNet()
+network = Folding()
 if args.model is not None:
     print('Loaded trained model from {}.'.format(args.model))
     network.load_state_dict(torch.load(args.model))
