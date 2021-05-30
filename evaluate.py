@@ -2,7 +2,7 @@ import argparse
 import torch
 
 from dataset.dataset import ShapeNet
-from model import FoldingNet
+from model import Folding
 from loss import ChamferDistance
 
 
@@ -20,7 +20,7 @@ cd_loss = ChamferDistance()
 test_dataset = ShapeNet(partial_path=args.partial_root, gt_path=args.gt_root, split='test')
 test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
-network = FoldingNet()
+network = Folding()
 network.load_state_dict(torch.load('/model/trained_model_fold.pth'))
 network.to(DEVICE)
 
