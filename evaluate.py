@@ -1,7 +1,7 @@
 import argparse
 import torch
 
-from dataset.dataset import ShapeNet
+from dataset.data_loader import ShapeNet
 from model import Folding
 from loss import ChamferDistance
 
