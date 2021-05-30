@@ -58,4 +58,4 @@ with torch.no_grad():
     save_point_cloud(y_detail.numpy(), 'visual/output.pcd')
 
     mean_loss = total_loss / iter_count
-    print("\nTesting loss is {}".format(mean_loss))
+    print("\nTesting loss of category is {}".format(mean_loss))
