@@ -16,33 +16,31 @@ class Encoder(nn.Module):
         self.bn3 = nn.BatchNorm1d(1024)
 
         self.fc1 = nn.Linear(1024 + 64, 1024)
-        self.fc2 = nn.Linear(1024, 512)  # codeword dimension = 512
-        # self.bn4 = nn.BatchNorm1d(1024)
-        # self.bn5 = nn.BatchNorm1d(512)
+        self.fc2 = nn.Linear(1024, 512)  
+        
 
     def forward(self, input):
         input = input.transpose(2, 1)
         x = F.relu(self.bn1(self.conv1(input)))
-        local_feature = x  # save the  low level features to concatenate this global feature.
+        local_feature = x  
         x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
         x = torch.max(x, 2, keepdim=True)[0]
         global_feature = x.view(-1, 1024, 1).repeat(1, 1, self.num_points)
-        feature = torch.cat([local_feature, global_feature], 1)  # [bs, 1088, 2048]
+        feature = torch.cat([local_feature, global_feature], 1)  
 
-        # TODO: add batch_norm or not?
+        
         x = F.relu(self.fc1(feature.transpose(1, 2)))
         x = F.relu(self.fc2(x))
 
-        # TODO: the actual output should be [bs, 1, 512] by max pooling ??
-        return torch.max(x, 1, keepdim=True)[0]  # [bs, 1, 512]
+        return torch.max(x, 1, keepdim=True)[0]  
 
 
 class Decoder(nn.Module):
     def __init__(self, num_points=2048, m=2025):
         super(Decoder, self).__init__()
-        self.n = num_points  # input point cloud size.
-        self.m = m  # 45 * 45.
+        self.n = num_points  
+        self.m = m  
         self.meshgrid = [[-0.3, 0.3, 45], [-0.3, 0.3, 45]]
         self.mlp1 = nn.Sequential(
             nn.Conv1d(514, 256, 1),
@@ -50,7 +48,7 @@ class Decoder(nn.Module):
             nn.Conv1d(256, 64, 1),
             nn.ReLU(),
             nn.Conv1d(64, 3, 1),
-            # nn.ReLU(),
+            
         )
 
         self.mlp2 = nn.Sequential(
@@ -59,15 +57,10 @@ class Decoder(nn.Module):
             nn.Conv1d(256, 64, 1),
             nn.ReLU(),
             nn.Conv1d(64, 3, 1),
-            # nn.ReLU(),
+           
         )
 
     def build_grid(self, batch_size):
-        # ret = np.meshgrid(*[np.linspace(it[0], it[1], num=it[2]) for it in self.meshgrid])
-        # ndim = len(self.meshgrid)
-        # grid = np.zeros((np.prod([it[2] for it in self.meshgrid]), ndim), dtype=np.float32)  # MxD
-        # for d in range(ndim):
-        #     grid[:, d] = np.reshape(ret[d], -1)
         x = np.linspace(*self.meshgrid[0])
         y = np.linspace(*self.meshgrid[1])
         grid = np.array(list(itertools.product(x, y)))
@@ -76,18 +69,18 @@ class Decoder(nn.Module):
         return grid.float()
 
     def forward(self, input):
-        input = input.transpose(1, 2).repeat(1, 1, self.m)  # [bs, 512, m]
-        grid = self.build_grid(input.shape[0]).transpose(1, 2)  # [bs, 2, m]
+        input = input.transpose(1, 2).repeat(1, 1, self.m)  
+        grid = self.build_grid(input.shape[0]).transpose(1, 2)  
         if torch.cuda.is_available():
             grid = grid.cuda()
-        concate1 = torch.cat((input, grid), dim=1)  # [bs, 514, m]
-        after_folding1 = self.mlp1(concate1)  # [bs, 3, m]
-        concate2 = torch.cat((input, after_folding1), dim=1)  # [bs, 515, m]
-        after_folding2 = self.mlp2(concate2)  # [bs, 3, m]
-        return after_folding2.transpose(1, 2)  # [bs, m ,3]
+        concate1 = torch.cat((input, grid), dim=1) 
+        after_folding1 = self.mlp1(concate1) 
+        concate2 = torch.cat((input, after_folding1), dim=1)  
+        after_folding2 = self.mlp2(concate2)  
+        return after_folding2.transpose(1, 2)  
 
 
-class FoldingNet(nn.Module):
+class Folding(nn.Module):
     def __init__(self, num_points):
         super(FoldNet, self).__init__()
 
@@ -103,21 +96,18 @@ class FoldingNet(nn.Module):
         return list(self.encoder.parameters()) + list(self.decoder.parameters())
 
     def get_loss(self, input, output):
-        # input shape  [bs, 2048, 3]
-        # output shape [bs, 2025, 3]
         return self.loss(input, output)
 
 if __name__ == "__main__":
     pcs = torch.rand(16, 3, 2048)
     encoder = Encoder()
     v = encoder(pcs)
-    print(v.size())
+
 
     decoder = Decoder()
     decoder(v)
     y_c, y_d = decoder(v)
-    print(y_c.size(), y_d.size())
 
-    ae = FoldingNet()
+    ae = Folding()
     v, y_coarse, y_detail = ae(pcs)
-    print(v.size(), y_coarse.size(), y_detail.size())
+   
