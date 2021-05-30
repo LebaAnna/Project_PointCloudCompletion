@@ -24,7 +24,7 @@ network = FoldingNet()
 network.load_state_dict(torch.load('/model/trained_model_fold.pth'))
 network.to(DEVICE)
 
-# testing: evaluate the mean cd loss
+# Mean cd loss
 network.eval()
 with torch.no_grad():
     total_loss, iter_count = 0, 0
