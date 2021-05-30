@@ -41,6 +41,7 @@ class ShapeNet(Data.Dataset):
         coarse_gt = gt_output[choice, :]
         dense_gt = resample_pcd(gt_output, self.num_dense)
 
+        
         # to torch tensor
         partial_input = torch.from_numpy(partial_input)
         coarse_gt = torch.from_numpy(coarse_gt)
