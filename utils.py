@@ -24,7 +24,6 @@ def setup_seed(seed):
 
 
 def resample_pcd(pcd, n):
-    """Drop or duplicate points so that pcd has exactly n points"""
     idx = np.random.permutation(pcd.shape[0])
     if idx.shape[0] < n:
         idx = np.concatenate([idx, np.random.randint(pcd.shape[0], size=n-pcd.shape[0])])
@@ -35,11 +34,8 @@ if __name__ == '__main__':
     pc = read_point_cloud('examples/chair.pcd')
     draw_geometries([pc])
     
-    # resample pcd
     pc.points = Vector3dVector(resample_pcd(np.asarray(pc.points), 16384))
     print(len(pc.points))
     draw_geometries([pc])
 
-    # for i in range(8):
-    #     pc = read_point_cloud('examples/{}.pcd'.format(i))
-    #     draw_geometries([pc])
+
