@@ -4,7 +4,7 @@ import torch
 import numpy
 import torch.optim as optim
 
-from dataset.dataset import ShapeNet
+from dataset.data_loader import ShapeNet
 from model import Folding
 from loss import ChamferDistance
 from utils import save_point_cloud
