@@ -74,11 +74,7 @@ for epoch in range(1, args.epochs + 1):
         
         iter_count += 1
         total_loss += loss.item()
-        
-        if i % 100 == 0:
-            print("Training epoch {}/{}, iteration {}/{}: loss is {}".format(epoch, args.epochs, i, max_iter, loss.item()))
-    scheduler.step()
-
+              
     print("Training epoch {}/{}: avg loss = {}".format(epoch, args.epochs, total_loss / iter_count))
 
     # evaluation
