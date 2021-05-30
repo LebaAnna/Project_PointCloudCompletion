@@ -10,7 +10,7 @@ from open3d import *
 import sys
 sys.path.append('.')
 sys.path.append('..')
-from utils import resample_pcd, show_point_cloud
+from utils import resample_pcd, save_point_cloud
 
 
 class ShapeNet(Data.Dataset):
