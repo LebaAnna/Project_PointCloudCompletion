@@ -105,7 +105,7 @@ for epoch in range(1, args.epochs + 1):
         mean_loss = total_loss / iter_count
         print("Validation epoch {}/{}, loss is {}".format(epoch, args.epochs, mean_loss))
 
-        # records the best model and epoch
+        # Save model
         if mean_loss < minimum_loss:
             partial_input, coarse_gt, dense_gt = val_dataset[random.randint(0, len(val_dataset))]
             partial_input = partial_input.to(DEVICE)
@@ -125,6 +125,5 @@ for epoch in range(1, args.epochs + 1):
             torch.save(network.state_dict(), + 'model/trained_model_fold.pth')
             
 
-    #print("Best model (lowest loss) in epoch {}".format(best_epoch))
-    
+   
 
