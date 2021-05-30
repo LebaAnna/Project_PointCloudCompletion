@@ -53,7 +53,7 @@ with torch.no_grad():
           
     y_coarse = y_coarse.permute(0, 2, 1)
     y_detail = y_detail.permute(0, 2, 1)
-    save_point_cloud(partial_input.numpy())
+    save_point_cloud(partial_input.numpy(), 'visual/partial_input.pcd')
     save_point_cloud(dense_gt.numpy())
     save_point_cloud(y_detail.numpy())
 
