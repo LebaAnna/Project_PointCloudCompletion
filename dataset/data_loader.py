@@ -27,8 +27,8 @@ class ShapeNet(Data.Dataset):
         self.metadata = list()
         for filename in filenames:
             for i in range(num_scans):
-                partial_input = os.path.join(partial_path, 'pcd', filename, '{}.pcd'.format(i))
-                ground_truth = os.path.join(gt_path, 'pcd', filename, '{}.pcd'.format(i))
+                partial_input = os.path.join(partial_path, filename, '{}.pcd'.format(i))
+                ground_truth = os.path.join(gt_path, filename, '{}.pcd'.format(i))
                 self.metadata.append((partial_input, ground_truth))
 
     def __getitem__(self, index):
