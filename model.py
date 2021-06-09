@@ -82,7 +82,7 @@ class Decoder(nn.Module):
 
 class Folding(nn.Module):
     def __init__(self, num_points):
-        super(FoldNet, self).__init__()
+        super(Folding, self).__init__()
 
         self.encoder = Encoder(num_points=num_points)
         self.decoder = Decoder(num_points=num_points)
