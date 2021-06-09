@@ -64,7 +64,7 @@ class Decoder(nn.Module):
         self.bn4 = nn.BatchNorm1d(512)
         
         # shared mlp 2
-        self.conv4 = nn.Conv1d(3+2+1024, 512, 1)
+        self.conv4 = nn.Conv1d(3+3+1024, 512, 1)
         self.conv5 = nn.Conv1d(512, 512, 1)
         self.conv6 = nn.Conv1d(512, 3, 1)
         self.bn5 = nn.BatchNorm1d(512)
